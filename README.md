@@ -14,7 +14,7 @@ To go in the other direction, see Steven Frank's [notes-import script](https://g
     -- A very basic backup script.
     --
     -- Usage:
-    --  * Modify dest folder in script
+    --  * Modify root  folder in script
     --  * Run shell script
     --
     -- Output:
