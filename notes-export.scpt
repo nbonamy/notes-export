@@ -26,9 +26,6 @@
 --    haven't been purged from disk yet.
 --
 
-set exportFolder to (choose folder) as string
-
-
 -- Find and Replace text.  Yes, this really takes 11 lines.
 -- Taken from http://brucep.net/2007/replace-text/
 on replaceText(find, replace, subject)
@@ -52,26 +49,32 @@ on noteNameToFilePath(noteName)
 end noteNameToFilePath
 
 
-tell application "Notes"
-	set attachmentLog to open for access (exportFolder & "_attachments.txt") with write permission
-	repeat with theNote in notes
+on run argv
 
-		-- Write the body of the note out to file as HTML
-		set filepath to noteNameToFilePath(name of theNote as string) of me
-		set noteFile to open for access filepath with write permission
-		write (body of theNote as string) to noteFile
-		close access noteFile
+	set exportFolder to item 1 of argv as string
 
-		-- Record a list of attachments for this file
-		if (count of (attachments of theNote)) is greater than 0 then
-			write ("\n" & name of theNote & ":\n\n") to attachmentLog
-		end if
+	tell application "Notes"
+		set attachmentLog to open for access (exportFolder & "_attachments.txt") with write permission
+		repeat with theNote in notes
 
-		repeat with theAttachment in attachments of theNote
-			write ("* " & name of theAttachment & "\n") to attachmentLog
+			-- Write the body of the note out to file as HTML
+			set filepath to noteNameToFilePath(name of theNote as string) of me
+			set noteFile to open for access filepath with write permission
+			write (body of theNote as string) to noteFile
+			close access noteFile
+
+			-- Record a list of attachments for this file
+			if (count of (attachments of theNote)) is greater than 0 then
+				write ("\n" & name of theNote & ":\n\n") to attachmentLog
+			end if
+
+			repeat with theAttachment in attachments of theNote
+				write ("* " & name of theAttachment & "\n") to attachmentLog
+			end repeat
+
 		end repeat
 
-	end repeat
+		close access attachmentLog
+	end tell
 
-	close access attachmentLog
-end tell
+end run
